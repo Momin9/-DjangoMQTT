@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MQTT Messages</title>
+</head>
+<body>
+    <h1>MQTT Messages</h1>
+    <ul id="message-list"></ul>
+
+    <script>
+        const socket = new WebSocket('ws://' + window.location.host + '/ws/some_path/');
+        socket.onmessage = function(event) {
+            const message = JSON.parse(event.data);
+            const messageList = document.getElementById('message-list');
+            const listItem = document.createElement('li');
+            listItem.textContent = message.message;
+            messageList.appendChild(listItem);
+        };
+
+        function publishMessage() {
+            const message = document.getElementById('message-input').value;
+            const topic = document.getElementById('topic-input').value;
+            const payload = JSON.stringify({ message: message, topic: topic });
+            socket.send(payload);
+            document.getElementById('message-input').value = '';
+            document.getElementById('topic-input').value = '';
+        }
+    </script>
+
+    <label for="topic-input">Topic:</label>
+    <input type="text" id="topic-input"><br>
+
+    <label for="message-input">Message:</label>
+    <input type="text" id="message-input"><br>
+
+    <button onclick="publishMessage()">Publish Message</button>
+</body>
+</html>
